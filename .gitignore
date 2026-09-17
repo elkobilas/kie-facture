@@ -1,0 +1,51 @@
+# Dépendances Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Base de données SQLite (fichier local, ne pas versionner les données)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Fichiers de logs
+logs/
+*.log
+
+# Variables d'environnement et secrets
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+
+# Clés API et configurations sensibles
+config/secrets.json
+secrets/
+
+# Fichiers système OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs et IDEs
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Fichiers temporaires
+tmp/
+temp/
+.cache/
+dist/
+
+# Fichiers de couverture de tests
+coverage/
+.nyc_output/

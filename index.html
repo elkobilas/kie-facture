@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KIE - Gestion, Comptabilité & Générateur de Factures</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <!-- En-tête / Barre Supérieure -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">KIE</div>
+        <div>
+          <p class="eyebrow">Système de Facturation & Comptabilité</p>
+          <h1>KIE Facture Pro</h1>
+        </div>
+      </div>
+
+      <!-- Navigation par Onglets -->
+      <nav class="nav-tabs" aria-label="Navigation principale">
+        <button class="nav-tab active" id="tabEditor" data-target="viewEditor" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Éditeur
+        </button>
+        <button class="nav-tab" id="tabDashboard" data-target="viewDashboard" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Tableau de Bord
+        </button>
+        <button class="nav-tab" id="tabHistory" data-target="viewHistory" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Registre Factures
+        </button>
+        <button class="nav-tab" id="tabClients" data-target="viewClients" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Clients (CRM)
+        </button>
+        <button class="nav-tab" id="tabProducts" data-target="viewProducts" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Catalogue
+        </button>
+        <button class="nav-tab" id="tabSecurity" data-target="viewSecurity" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Sécurité BDD
+        </button>
+      </nav>
+
+      <div class="topbar-actions">
+        <button class="button ghost" id="resetDraft" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Nouveau
+        </button>
+        <button class="button primary" id="saveDatabase" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Enregistrer en BDD
+        </button>
+        <button class="button" id="printInvoice" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimer / PDF
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      
+      <!-- ================= VUE 1 : ÉDITEUR & APERÇU ================= -->
+      <div class="view-panel active" id="viewEditor">
+        <div class="workspace">
+          <!-- Formulaire Éditeur -->
+          <section class="editor" aria-label="Formulaire de facture">
+            
+            <!-- Entreprise -->
+            <div class="section-card">
+              <div class="section-heading">
+                <div class="heading-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+                </div>
+                <h2>Entreprise Émettrice</h2>
+              </div>
+              <div class="form-grid two">
+                <label>
+                  Nom de l'Entreprise
+                  <input id="companyName" type="text" value="KIE Services" autocomplete="organization">
+                </label>
+                <label>
+                  Téléphone / Contact
+                  <input id="companyPhone" type="tel" value="+226 70 00 00 00" placeholder="+226 00 00 00 00">
+                </label>
+                <label class="wide">
+                  Adresse physique & Infos Légales
+                  <textarea id="companyAddress" rows="2" placeholder="Secteur 15, Ouagadougou, Burkina Faso - IFU: 00012345X"></textarea>
+                </label>
+              </div>
+            </div>
+
+            <!-- Facture Infos & Numérotation Séquentielle -->
+            <div class="section-card">
+              <div class="section-heading">
+                <div class="heading-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h2>Détails Facture & Séquence</h2>
+              </div>
+              <div class="form-grid three">
+                <label>
+                  N° Facture (Auto-Séquentiel)
+                  <input id="invoiceNumber" type="text" value="FAC-2026-0001" readonly class="read-only-input">
+                </label>
+                <label>
+                  Date d'Émission
+                  <input id="invoiceDate" type="date">
+                </label>
+                <label>
+                  Date d'Échéance
+                  <input id="dueDate" type="date">
+                </label>
+              </div>
+            </div>
+
+            <!-- Client & Sélection CRM -->
+            <div class="section-card">
+              <div class="section-heading">
+                <div class="heading-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <h2>Informations Client (CRM)</h2>
+              </div>
+              
+              <div class="form-grid wide margin-bottom-sm">
+                <label>
+                  Sélectionner un client enregistré
+                  <select id="clientSelect">
+                    <option value="">-- Choisir un client existant ou saisir ci-dessous --</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-grid two">
+                <label>
+                  Nom du Client / Entreprise
+                  <input id="clientName" type="text" placeholder="Ex: Société Burkina Tech">
+                </label>
+                <label>
+                  Téléphone du Client
+                  <input id="clientPhone" type="tel" placeholder="+226 76 00 00 00">
+                </label>
+                <label class="wide">
+                  Adresse du Client
+                  <textarea id="clientAddress" rows="2" placeholder="Ouagadougou, Burkina Faso"></textarea>
+                </label>
+              </div>
+            </div>
+
+            <!-- Articles -->
+            <div class="section-card">
+              <div class="section-heading with-action">
+                <div class="heading-title-group">
+                  <div class="heading-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                  </div>
+                  <h2>Prestations & Articles</h2>
+                </div>
+                <button class="button compact primary-soft" id="addItem" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Ajouter une ligne
+                </button>
+              </div>
+              <div class="items" id="items"></div>
+            </div>
+
+            <!-- Configuration Totaux -->
+            <div class="section-card">
+              <div class="section-heading">
+                <div class="heading-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="10" y1="12" x2="18" y2="12"/><line x1="6" y1="16" x2="6" y2="16"/><line x1="10" y1="16" x2="18" y2="16"/></svg>
+                </div>
+                <h2>Calculs & Taxe</h2>
+              </div>
+              <div class="form-grid three">
+                <label>
+                  Remise (%)
+                  <input id="discountRate" type="number" min="0" max="100" step="0.5" value="0">
+                </label>
+                <label>
+                  TVA (%)
+                  <input id="taxRate" type="number" min="0" max="100" step="0.5" value="18">
+                </label>
+                <label>
+                  Devise
+                  <input id="currency" type="text" value="FCFA" maxlength="8">
+                </label>
+              </div>
+            </div>
+
+            <!-- Configuration Systèmes de Paiement -->
+            <div class="section-card highlight-card">
+              <div class="section-heading">
+                <div class="heading-icon accent-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                </div>
+                <h2>Configuration des Systèmes de Paiement</h2>
+              </div>
+              
+              <div class="form-grid two">
+                <label>
+                  Mode de Paiement Principal
+                  <select id="paymentMethod">
+                    <option value="Mobile Money">Mobile Money (Orange, Moov, Wave, MTN)</option>
+                    <option value="Virement bancaire">Virement bancaire (RIB / IBAN)</option>
+                    <option value="Lien de paiement (Online)">Lien de paiement (PayLink / Stripe / Wave)</option>
+                    <option value="Especes">Espèces / Comptoir</option>
+                    <option value="Cheque">Chèque bancaire</option>
+                  </select>
+                </label>
+
+                <label>
+                  Statut du Paiement
+                  <select id="paymentStatus">
+                    <option value="En attente">En attente (Non payée)</option>
+                    <option value="Payee">Payée (Réglée)</option>
+                    <option value="Partiellement payee">Partiellement payée (Acompte)</option>
+                    <option value="Annulee">Annulée</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-grid two margin-top-sm">
+                <label>
+                  Montant Déjà Payé / Acompte
+                  <input id="amountPaid" type="number" min="0" step="1000" value="0" placeholder="0">
+                </label>
+                <label>
+                  URL / Lien de Paiement Direct (QR Code)
+                  <input id="payLink" type="url" placeholder="https://pay.wave.com/m/... ou lien marchand">
+                </label>
+              </div>
+
+              <!-- Mobile Money -->
+              <div class="payment-config-panel" id="mobileMoneyConfig">
+                <div class="config-title">Coordonnées Mobile Money</div>
+                <div class="form-grid three">
+                  <label>
+                    Opérateur
+                    <select id="mobileProvider">
+                      <option value="Orange Money">Orange Money</option>
+                      <option value="Moov Money">Moov Money</option>
+                      <option value="Wave">Wave</option>
+                      <option value="MTN Mobile Money">MTN Mobile Money</option>
+                    </select>
+                  </label>
+                  <label>
+                    Numéro Marchand / Téléphone
+                    <input id="mobileNumber" type="text" value="+226 70 00 00 00" placeholder="+226 70 00 00 00">
+                  </label>
+                  <label>
+                    Nom du Compte
+                    <input id="mobileMerchantName" type="text" value="KIE Services" placeholder="Nom enregistré">
+                  </label>
+                </div>
+              </div>
+
+              <!-- Virement Bancaire -->
+              <div class="payment-config-panel" id="bankConfig">
+                <div class="config-title">Coordonnées Bancaires (RIB / IBAN)</div>
+                <div class="form-grid two">
+                  <label>
+                    Nom de la Banque
+                    <input id="bankName" type="text" placeholder="Ex: Coris Bank / BOA / UBA">
+                  </label>
+                  <label>
+                    Titulaire du Compte
+                    <input id="bankHolder" type="text" placeholder="Nom complet du titulaire">
+                  </label>
+                  <label>
+                    IBAN / Numéro de Compte
+                    <input id="bankIban" type="text" placeholder="BF67 0100 1001 0000 0000 0000">
+                  </label>
+                  <label>
+                    Code BIC / SWIFT
+                    <input id="bankBic" type="text" placeholder="EX: CBOABFBF">
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-grid wide margin-top-sm">
+                <label>
+                  Notes, Instructions & Conditions de Règlement
+                  <textarea id="notes" rows="2" placeholder="Règlement sous 15 jours. Mentions légales, références de paiement..."></textarea>
+                </label>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- Section Aperçu de Facture -->
+          <aside class="preview-panel" aria-label="Aperçu de facture">
+            <div class="preview-toolbar">
+              <span>Aperçu en Temps Réel (A4)</span>
+              <span class="preview-badge-status" id="liveStatusTag">Aperçu direct</span>
+            </div>
+
+            <section class="invoice" id="invoicePreview">
+              <div class="invoice-header">
+                <div class="invoice-brand-block">
+                  <div class="company-logo-badge" id="companyLogoBadge">KIE</div>
+                  <div>
+                    <strong class="invoice-company-title" id="previewCompanyName">KIE Services</strong>
+                    <p class="invoice-company-details" id="previewCompanyAddress">Secteur 15, Ouagadougou, Burkina Faso</p>
+                    <p class="invoice-company-phone" id="previewCompanyPhone">+226 70 00 00 00</p>
+                  </div>
+                </div>
+
+                <div class="invoice-title-block">
+                  <div class="invoice-status-badge pending" id="previewStatus">EN ATTENTE</div>
+                  <p class="invoice-label">FACTURE</p>
+                  <h2 id="previewNumber">FAC-2026-0001</h2>
+                </div>
+              </div>
+
+              <div class="invoice-meta-grid">
+                <div class="meta-card">
+                  <span class="meta-label">Date d'Émission</span>
+                  <strong id="previewDate">--/--/----</strong>
+                </div>
+                <div class="meta-card">
+                  <span class="meta-label">Date d'Échéance</span>
+                  <strong id="previewDue">--/--/----</strong>
+                </div>
+                <div class="meta-card">
+                  <span class="meta-label">Mode de Paiement</span>
+                  <strong id="previewPayment">Mobile Money</strong>
+                </div>
+              </div>
+
+              <div class="bill-to-card">
+                <span class="bill-to-label">FACTURÉ À</span>
+                <strong class="client-name-preview" id="previewClientName">Nom du Client</strong>
+                <p class="client-address-preview" id="previewClientAddress">Adresse du client</p>
+                <p class="client-phone-preview" id="previewClientPhone"></p>
+              </div>
+
+              <!-- Tableau des Articles -->
+              <table class="invoice-table">
+                <thead>
+                  <tr>
+                    <th class="col-desc">DÉSIGNATION / PRESTATION</th>
+                    <th class="col-qty">QTÉ</th>
+                    <th class="col-price">PRIX UNITAIRE</th>
+                    <th class="col-total">TOTAL</th>
+                  </tr>
+                </thead>
+                <tbody id="previewItems"></tbody>
+              </table>
+
+              <div class="invoice-bottom">
+                <div class="payment-box" id="paymentDetailsBox">
+                  <div class="payment-box-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <span>INSTRUCTIONS DE PAIEMENT</span>
+                  </div>
+                  
+                  <div class="payment-instructions-body" id="paymentInstructionsText"></div>
+
+                  <div class="qr-code-wrapper" id="qrCodeWrapper">
+                    <div class="qr-code-container" id="qrCodeContainer"></div>
+                    <div class="qr-code-caption">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                      <span>Scanner pour régler</span>
+                    </div>
+                  </div>
+
+                  <p class="invoice-notes-text" id="previewNotes"></p>
+                </div>
+
+                <div class="totals-card">
+                  <div class="totals-row">
+                    <span>Sous-total HT</span>
+                    <strong id="subtotal">0 FCFA</strong>
+                  </div>
+                  <div class="totals-row discount-row" id="discountRow">
+                    <span>Remise (<span id="previewDiscountRate">0</span>%)</span>
+                    <strong id="discount">-0 FCFA</strong>
+                  </div>
+                  <div class="totals-row">
+                    <span>TVA (<span id="previewTaxRate">18</span>%)</span>
+                    <strong id="tax">0 FCFA</strong>
+                  </div>
+                  <div class="totals-row grand-total">
+                    <span>Total TTC</span>
+                    <strong id="grandTotal">0 FCFA</strong>
+                  </div>
+                  <div class="totals-row paid-row" id="paidRow">
+                    <span>Montant Payé</span>
+                    <strong id="previewPaid">0 FCFA</strong>
+                  </div>
+                  <div class="totals-row balance-row" id="balanceRow">
+                    <span>SOLDE RESTANT DÛ</span>
+                    <strong id="previewBalance">0 FCFA</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="invoice-footer">
+                <p>Merci pour votre confiance. Facture séquentielle enregistrée en base de données.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+
+      <!-- ================= VUE 2 : TABLEAU DE BORD FINANCIER ================= -->
+      <div class="view-panel" id="viewDashboard">
+        <div class="view-header">
+          <div>
+            <h2>Tableau de Bord Financier & Comptabilité</h2>
+            <p class="view-sub">Synthèse du chiffre d'affaires, des taxes collectées et des créances en temps réel.</p>
+          </div>
+          <div class="view-actions">
+            <a class="button primary" href="/api/reports/export/csv" download="journal_des_ventes.csv">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exporter Journal Ventes (CSV)
+            </a>
+          </div>
+        </div>
+
+        <!-- Cartes KPI Financières -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Chiffre d'Affaires (HT)</span>
+            <strong class="kpi-value" id="kpiTotalHT">0 FCFA</strong>
+            <span class="kpi-foot">Montant hors taxe facturé</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">TVA Collectée (18%)</span>
+            <strong class="kpi-value" id="kpiTotalTVA">0 FCFA</strong>
+            <span class="kpi-foot">Taxe sur la valeur ajoutée</span>
+          </div>
+          <div class="kpi-card success">
+            <span class="kpi-label">Total Encaissé (Règlements)</span>
+            <strong class="kpi-value" id="kpiTotalPaid">0 FCFA</strong>
+            <span class="kpi-foot" id="kpiRecoveryRate">Taux de recouvrement : 0%</span>
+          </div>
+          <div class="kpi-card warning">
+            <span class="kpi-label">Créances & Solde Restant Dû</span>
+            <strong class="kpi-value" id="kpiTotalBalance">0 FCFA</strong>
+            <span class="kpi-foot" id="kpiPendingInvoices">0 factures en attente</span>
+          </div>
+        </div>
+
+        <!-- Résumé Comptable Détaillé -->
+        <div class="dashboard-cards-grid">
+          <div class="dashboard-card">
+            <h3>Synthèse des Factures Émises</h3>
+            <div class="stats-summary-list">
+              <div class="summary-item">
+                <span>Nombre Total de Factures Séquentielles</span>
+                <strong id="statTotalCount">0</strong>
+              </div>
+              <div class="summary-item">
+                <span>Factures Intégralement Payées</span>
+                <strong id="statPaidCount" class="text-success">0</strong>
+              </div>
+              <div class="summary-item">
+                <span>Factures Partiellement Payées (Acomptes)</span>
+                <strong id="statPartialCount" class="text-primary">0</strong>
+              </div>
+              <div class="summary-item">
+                <span>Factures Non Réglées (En attente)</span>
+                <strong id="statPendingCount" class="text-warning">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>Actions Rapides & Sauvegarde</h3>
+            <p style="font-size:0.86rem; color:var(--muted); margin-bottom:16px;">Générez des rapports pour votre expert-comptable ou sauvegardez la base de données SQLite.</p>
+            <div class="actions-column">
+              <a class="button" href="/api/backup" download="kie_facture_database_backup.json">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Télécharger la Sauvegarde BDD (JSON)
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VUE 3 : HISTORIQUE & REGISTRE DES FACTURES ================= -->
+      <div class="view-panel" id="viewHistory">
+        <div class="view-header">
+          <div>
+            <h2>Registre & Journal des Factures</h2>
+            <p class="view-sub">Consultation séquentielle, recherche et enregistrement de règlements.</p>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input id="historySearch" type="text" placeholder="Rechercher par N° Facture ou Nom de Client...">
+          <select id="historyFilterStatus">
+            <option value="ALL">Tous les statuts</option>
+            <option value="En attente">En attente (Non payées)</option>
+            <option value="Payee">Payées</option>
+            <option value="Partiellement payee">Partiellement payées</option>
+          </select>
+          <button class="button" id="refreshHistory" type="button">Actualiser</button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>N° FACTURE</th>
+                <th>DATE ÉMISSION</th>
+                <th>CLIENT</th>
+                <th>TOTAL TTC</th>
+                <th>MONTANT PAYÉ</th>
+                <th>SOLDE DÛ</th>
+                <th>STATUT</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr>
+                <td colspan="8" style="text-align:center; padding:30px; color:var(--muted);">Chargement de l'historique...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VUE 4 : CLIENTS (CRM) ================= -->
+      <div class="view-panel" id="viewClients">
+        <div class="view-header">
+          <div>
+            <h2>Répertoire des Clients (CRM)</h2>
+            <p class="view-sub">Gérez vos clients enregistrés pour un remplissage instantané des factures.</p>
+          </div>
+        </div>
+
+        <div class="grid-two-columns">
+          <div class="section-card">
+            <h3>Ajouter un Nouveau Client</h3>
+            <form id="addClientForm" class="form-grid margin-top-sm">
+              <label>
+                Nom du Client / Entreprise *
+                <input id="newClientName" type="text" required placeholder="Ex: Société Burkina Tech">
+              </label>
+              <label>
+                Téléphone
+                <input id="newClientPhone" type="tel" placeholder="+226 76 00 00 00">
+              </label>
+              <label>
+                Email
+                <input id="newClientEmail" type="email" placeholder="contact@client.com">
+              </label>
+              <label>
+                Adresse complète
+                <textarea id="newClientAddress" rows="2" placeholder="Ouagadougou, Secteur 15"></textarea>
+              </label>
+              <button class="button primary margin-top-sm" type="submit">Enregistrer le Client</button>
+            </form>
+          </div>
+
+          <div class="section-card">
+            <h3>Liste des Clients Enregistrés</h3>
+            <div class="table-container margin-top-sm">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>NOM CLIENT</th>
+                    <th>TÉLÉPHONE</th>
+                    <th>ADRESSE</th>
+                  </tr>
+                </thead>
+                <tbody id="clientsTableBody">
+                  <tr><td colspan="3" style="text-align:center;">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VUE 5 : CATALOGUE PRODUITS & SERVICES ================= -->
+      <div class="view-panel" id="viewProducts">
+        <div class="view-header">
+          <div>
+            <h2>Catalogue de Prestations & Produits</h2>
+            <p class="view-sub">Prestations prédéfinies et tarifs unitaires pour vos factures.</p>
+          </div>
+        </div>
+
+        <div class="grid-two-columns">
+          <div class="section-card">
+            <h3>Ajouter au Catalogue</h3>
+            <form id="addProductForm" class="form-grid margin-top-sm">
+              <label>
+                Désignation de la Prestation *
+                <input id="newProductName" type="text" required placeholder="Ex: Maintenance Réseau & Serveur">
+              </label>
+              <label>
+                Prix Unitaire (FCFA) *
+                <input id="newProductPrice" type="number" required min="0" step="500" placeholder="50000">
+              </label>
+              <label>
+                Catégorie
+                <input id="newProductCategory" type="text" placeholder="Services IT / Conseil / Infrastructure">
+              </label>
+              <button class="button primary margin-top-sm" type="submit">Enregistrer dans le Catalogue</button>
+            </form>
+          </div>
+
+          <div class="section-card">
+            <h3>Prestations au Catalogue</h3>
+            <div class="table-container margin-top-sm">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>PRESTATION</th>
+                    <th>CATÉGORIE</th>
+                    <th>PRIX UNITAIRE</th>
+                  </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                  <tr><td colspan="3" style="text-align:center;">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VUE 6 : SÉCURITÉ & AUDIT BDD ================= -->
+      <div class="view-panel" id="viewSecurity">
+        <div class="view-header">
+          <div>
+            <h2>Sécurité BDD & Journal d'Audit</h2>
+            <p class="view-sub">Traçabilité complète des opérations et vérification de la base SQLite.</p>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3>Journal des Opérations & d'Audit</h3>
+          <div class="table-container margin-top-sm">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>HORODATAGE</th>
+                  <th>ACTION</th>
+                  <th>TYPE ENTITÉ</th>
+                  <th>RÉFÉRENCE</th>
+                  <th>DÉTAILS</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody">
+                <tr><td colspan="5" style="text-align:center;">Chargement du journal d'audit...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- MODAL DE RÈGLEMENT DE FACTURE -->
+    <div class="modal-overlay" id="paymentModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Enregistrer un Règlement sur Facture</h3>
+          <button class="modal-close" id="closePaymentModal" type="button">&times;</button>
+        </div>
+        <form id="recordPaymentForm" class="form-grid margin-top-sm">
+          <input type="hidden" id="modalInvoiceId">
+          <div class="modal-info-box">
+            <span id="modalInvoiceNumber">FACTURE FAC-XXXX</span> | Client: <strong id="modalClientName">Client</strong><br>
+            Solde Restant Dû : <strong id="modalBalanceDue" class="text-warning">0 FCFA</strong>
+          </div>
+          <label>
+            Montant du Versement / Règlement *
+            <input id="paymentAmount" type="number" required min="1" step="500">
+          </label>
+          <label>
+            Mode de Paiement
+            <select id="paymentMethodModal">
+              <option value="Mobile Money">Mobile Money (Orange, Moov, Wave)</option>
+              <option value="Virement bancaire">Virement bancaire</option>
+              <option value="Especes">Espèces</option>
+              <option value="Cheque">Chèque</option>
+            </select>
+          </label>
+          <label>
+            Date du Paiement
+            <input id="paymentDateModal" type="date">
+          </label>
+          <label>
+            Référence Transaction / N° Chèque
+            <input id="paymentRefModal" type="text" placeholder="Ex: TX-99201920 ou Ref Orange">
+          </label>
+          <button class="button primary margin-top-sm" type="submit">Valider le Règlement</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
+
