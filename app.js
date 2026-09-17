@@ -640,14 +640,26 @@ function openPaymentModal(data) {
   const modal = document.querySelector("#paymentModal");
   if (!modal) return;
 
+  // dataset renvoie toujours des strings → convertir en nombre
+  const balanceNum = Math.round(parseFloat(data.balance) || 0);
+
   document.querySelector("#modalInvoiceId").value = data.id;
   setText("modalInvoiceNumber", data.number);
   setText("modalClientName", data.client);
-  setText("modalBalanceDue", money(data.balance));
-  document.querySelector("#paymentAmount").value = data.balance;
+  setText("modalBalanceDue", money(balanceNum));
+
+  // Pré-remplir le montant avec le solde restant (valeur numérique entière)
+  const amountInput = document.querySelector("#paymentAmount");
+  amountInput.value = balanceNum;
+  amountInput.min = 1;
+  amountInput.max = balanceNum;
+
   document.querySelector("#paymentDateModal").value = todayIso();
 
   modal.classList.add("active");
+
+  // Focus automatique sur le champ montant
+  setTimeout(() => amountInput.focus(), 100);
 }
 
 function closePaymentModal() {
@@ -663,10 +675,20 @@ if (recordForm) {
   recordForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const invoiceId = document.querySelector("#modalInvoiceId").value;
-    const amount = document.querySelector("#paymentAmount").value;
+    // Convertir explicitement en nombre pour éviter l'erreur de validation
+    const amount = parseFloat(document.querySelector("#paymentAmount").value);
     const paymentMethod = document.querySelector("#paymentMethodModal").value;
     const paymentDate = document.querySelector("#paymentDateModal").value;
     const referenceCode = document.querySelector("#paymentRefModal").value;
+
+    if (!amount || amount <= 0) {
+      alert("Veuillez saisir un montant valide supérieur à 0.");
+      document.querySelector("#paymentAmount").focus();
+      return;
+    }
+
+    const submitBtn = recordForm.querySelector("button[type=submit]");
+    if (submitBtn) submitBtn.textContent = "Enregistrement...";
 
     try {
       const res = await fetch(`${API_BASE}/invoices/${invoiceId}/payments`, {
@@ -680,12 +702,22 @@ if (recordForm) {
         closePaymentModal();
         fetchDashboardData();
         fetchHistoryData();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Erreur : ${err.error || "Impossible d'enregistrer le règlement"}`);
       }
     } catch (err) {
-      alert("Erreur lors de l'enregistrement du règlement.");
+      alert("Erreur réseau / Serveur non joignable.");
+    } finally {
+      if (submitBtn) submitBtn.textContent = "Valider le Règlement";
     }
   });
 }
+
+// Fermer le modal en cliquant sur l'arrière-plan
+document.querySelector("#paymentModal")?.addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) closePaymentModal();
+});
 
 // Supprimer une facture
 async function deleteInvoice(id) {
